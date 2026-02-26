@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LMS - Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <nav id="main-nav"></nav>
+
+  <main>
+    <h1>Dashboard</h1>
+
+    <div class="stats-grid" id="stats"></div>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+
+      <div class="card" style="flex:1; min-width:200px;">
+        <h2>Clock</h2>
+        <div id="clock" style="font-size:22px; font-weight:bold; margin-bottom:4px;"></div>
+        <div id="clock-date" style="font-size:12px; color:#777;"></div>
+      </div>
+
+      <div class="card" style="flex:1; min-width:200px;">
+        <h2>Announcements</h2>
+        <div id="ann-text" style="margin-bottom:10px; font-size:13px;"></div>
+        <button class="btn btn-gray" onclick="nextAnn()">Next</button>
+        <div id="ann-counter" style="font-size:11px; color:#999; margin-top:6px;"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="nav.js"></script>
+  <script>
+    renderNav('dashboard');
+
+    function tick() {
+      const now = new Date();
+      let h = now.getHours(), ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      const m = String(now.getMinutes()).padStart(2,'0');
+      const s = String(now.getSeconds()).padStart(2,'0');
+      document.getElementById('clock').textContent = h + ':' + m + ':' + s + ' ' + ampm;
+      document.getElementById('clock-date').textContent = now.toDateString();
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    const anns = [
+      'Welcome to the Student LMS!',
+      'Midterm exams are scheduled for next week.',
+      'New courses added for the Spring semester.',
+      'Library closed this Saturday for maintenance.',
+      'Check the tasks page for upcoming deadlines.',
+    ];
+    let annIdx = 0;
+    function showAnn() {
+      document.getElementById('ann-text').textContent = anns[annIdx];
+      document.getElementById('ann-counter').textContent = (annIdx+1) + ' of ' + anns.length;
+    }
+    function nextAnn() { annIdx = (annIdx + 1) % anns.length; showAnn(); }
+    showAnn();
+
+    const tasks   = JSON.parse(localStorage.getItem('lms_tasks')   || '[]');
+    const courses = JSON.parse(localStorage.getItem('lms_courses') || '[]');
+    const done    = tasks.filter(t => t.done).length;
+
+    const stats = [
+      { label: 'Total Tasks',   value: tasks.length },
+      { label: 'Completed',     value: done },
+      { label: 'Pending',       value: tasks.length - done },
+      { label: 'Total Courses', value: courses.length },
+    ];
+
+    document.getElementById('stats').innerHTML = stats.map(s =>
+      `<div class="stat-box">
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-value">${s.value}</div>
+      </div>`
+    ).join('');
+  </script>
+</body>
+</html>

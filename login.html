@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LMS - Login</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-box">
+      <h1>Login</h1>
+
+      <div id="alert" class="alert alert-error"></div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Username"/>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Password"/>
+      </div>
+
+      <button class="btn btn-primary" onclick="login()" style="width:100%;">Login</button>
+    </div>
+  </div>
+
+  <script>
+    if (localStorage.getItem('lms_user')) {
+      window.location.href = 'dashboard.html';
+    }
+
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const alert = document.getElementById('alert');
+
+      if (!username || !password) {
+        alert.textContent = 'All fields are required.';
+        alert.classList.add('show');
+        return;
+      }
+      if (password.length < 6) {
+        alert.textContent = 'Password must be at least 6 characters.';
+        alert.classList.add('show');
+        return;
+      }
+
+      localStorage.setItem('lms_user', username);
+      window.location.href = 'dashboard.html';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+  </script>
+</body>
+</html>

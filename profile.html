@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LMS - Profile</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <nav id="main-nav"></nav>
+
+  <main>
+    <h1>Profile</h1>
+
+    <div class="card" style="max-width:400px;">
+      <h2>Update Username</h2>
+      <div id="profile-alert" class="alert"></div>
+
+      <div class="form-group">
+        <label>Current Username</label>
+        <div id="current-username" style="font-size:14px; padding:6px 0; font-weight:bold;"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="new-username">New Username</label>
+        <input type="text" id="new-username" placeholder="Enter new username"/>
+      </div>
+
+      <button class="btn btn-primary" onclick="updateUsername()">Update</button>
+    </div>
+  </main>
+
+  <script src="nav.js"></script>
+  <script>
+    renderNav('profile');
+
+    function load() {
+      const user = localStorage.getItem('lms_user') || '';
+      document.getElementById('current-username').textContent = user;
+      document.getElementById('new-username').value = user;
+    }
+
+    function updateUsername() {
+      const val     = document.getElementById('new-username').value.trim();
+      const alertEl = document.getElementById('profile-alert');
+
+      if (!val) {
+        alertEl.textContent = 'Username cannot be empty.';
+        alertEl.className   = 'alert alert-error show';
+        return;
+      }
+
+      localStorage.setItem('lms_user', val);
+      alertEl.textContent = 'Username updated successfully.';
+      alertEl.className   = 'alert alert-success show';
+      load();
+      setTimeout(() => alertEl.classList.remove('show'), 3000);
+    }
+
+    load();
+    document.getElementById('new-username').addEventListener('keydown', e => {
+      if (e.key === 'Enter') updateUsername();
+    });
+  </script>
+</body>
+</html>
